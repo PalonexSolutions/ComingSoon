@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Palonex Solutions — Coming Soon</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Parisienne&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: radial-gradient(circle at top, #151515 0%, #020202 55%, #000 100%);
+      color: #e5e5e5;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* === 3D SCENE CANVAS === */
+    #scene-container {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+    }
+
+    /* subtle vignette overlay */
+    .vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.35) 60%, rgba(0,0,0,0.85) 100%);
+      z-index: 2;
+    }
+
+    /* === CONTENT OVERLAY === */
+    .content {
+      position: relative;
+      z-index: 3;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 1.5rem;
+      pointer-events: none; /* only allow buttons to receive events */
+    }
+
+    .content-inner {
+      max-width: 720px;
+      pointer-events: auto;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      background: radial-gradient(circle at top left, rgba(212, 175, 55, 0.18), transparent 60%);
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #f3e5b5;
+      margin-bottom: 1.5rem;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #d4af37;
+      box-shadow: 0 0 12px rgba(212, 175, 55, 0.9);
+    }
+
+    .title {
+      font-size: clamp(2.2rem, 4vw, 3.1rem);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+      background: linear-gradient(135deg, #f7f1c0, #d4af37, #8b6b22);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .underline {
+      width: 130px;
+      height: 2px;
+      margin: 0 auto 1.6rem auto;
+      background: linear-gradient(90deg, #5c4b1f, #d4af37, #5c4b1f);
+      opacity: 0.75;
+    }
+
+    .tagline {
+      font-family: "Parisienne", cursive;
+      font-size: clamp(1.8rem, 3vw, 2.3rem);
+      margin-bottom: 1.7rem;
+      background: linear-gradient(135deg, #fff0c2, #e0c26e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .desc {
+      font-size: 0.98rem;
+      color: #bcbcbc;
+      line-height: 1.7;
+      margin-bottom: 2.3rem;
+    }
+
+    /* CTA row */
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      justify-content: center;
+      margin-bottom: 2.2rem;
+    }
+
+    .btn-primary,
+    .btn-ghost {
+      border-radius: 999px;
+      padding: 0.78rem 1.8rem;
+      font-size: 0.86rem;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.28s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary {
+      background: radial-gradient(circle at top left, #f7e9b0 0%, #d4af37 45%, #8b6b22 100%);
+      color: #111;
+      box-shadow:
+        0 0 14px rgba(212, 175, 55, 0.65),
+        0 18px 35px rgba(0, 0, 0, 0.9);
+    }
+
+    .btn-primary::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(255,255,255,0.32), transparent 40%, transparent 60%, rgba(255,255,255,0.18));
+      opacity: 0;
+      transform: translateX(-30%);
+      transition: opacity 0.28s ease, transform 0.55s ease;
+    }
+
+    .btn-primary:hover::before {
+      opacity: 1;
+      transform: translateX(30%);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow:
+        0 0 22px rgba(212, 175, 55, 0.9),
+        0 24px 45px rgba(0, 0, 0, 0.95);
+    }
+
+    .btn-ghost {
+      background: rgba(10,10,10,0.85);
+      border-color: rgba(120, 120, 120, 0.7);
+      color: #d4d4d4;
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-ghost:hover {
+      border-color: rgba(212, 175, 55, 0.7);
+      color: #fff0c2;
+      box-shadow: 0 0 16px rgba(212, 175, 55, 0.35);
+      transform: translateY(-2px);
+    }
+
+    .hint {
+      font-size: 0.78rem;
+      color: #7f7f7f;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75rem;
+      color: #5f5f5f;
+      z-index: 3;
+      text-align: center;
+      padding: 0 1rem;
+    }
+
+    footer span {
+      color: #a08b4a;
+    }
+
+    @media (max-width: 640px) {
+      .content {
+        padding-top: 1.4rem;
+      }
+      .core-hint {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 3D scene background -->
+  <div id="scene-container"></div>
+  <div class="vignette"></div>
+
+  <!-- UI content -->
+  <div class="content">
+    <div class="content-inner">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        INTELLIGENT SYSTEMS IN PROGRESS
+      </div>
+
+      <div class="title">PALONEX SOLUTIONS</div>
+      <div class="underline"></div>
+
+      <div class="tagline">Tools that think, steps that work.</div>
+
+      <div class="desc">
+        We are building orchestration layers for real-world intelligence —
+        systems that analyse, decide and act with precision.<br>
+        Our full experience is under construction.
+      </div>
+
+      <div class="cta-row">
+        <button class="btn-primary">Notify me at launch</button>
+        <button class="btn-ghost core-hint">Move your cursor — this is live.</button>
+      </div>
+
+      <div class="hint">
+        Tip: Drag your mouse or finger to orbit the particle core. Click to energise it.
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    © <span id="year"></span> Palonex Solutions — All Rights Reserved.
+  </footer>
+
+  <!-- Three.js from CDN -->
+  <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
+
+  <script>
+    // Year
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // === THREE.JS PARTICLE HOLOGRAM SCENE ===
+    const container = document.getElementById("scene-container");
+
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(
+      55,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    camera.position.set(0, 0, 18);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Soft environment light
+    const ambient = new THREE.AmbientLight(0xffffff, 0.45);
+    scene.add(ambient);
+
+    const dirLight = new THREE.DirectionalLight(0xfff4d0, 0.8);
+    dirLight.position.set(4, 6, 8);
+    scene.add(dirLight);
+
+    // === MAIN PARTICLE SPHERE ===
+    const sphereGroup = new THREE.Group();
+    scene.add(sphereGroup);
+
+    const sphereGeometry = new THREE.BufferGeometry();
+    const particleCount = 1600;
+    const positions = new Float32Array(particleCount * 3);
+
+    const radius = 7;
+    for (let i = 0; i < particleCount; i++) {
+      // Fibonacci sphere distribution
+      const iRel = i / (particleCount - 1);
+      const phi = Math.acos(1 - 2 * iRel);
+      const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+
+      const x = radius * Math.cos(theta) * Math.sin(phi);
+      const y = radius * Math.sin(theta) * Math.sin(phi);
+      const z = radius * Math.cos(phi);
+
+      positions[i * 3] = x;
+      positions[i * 3 + 1] = y;
+      positions[i * 3 + 2] = z;
+    }
+
+    sphereGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+
+    const sphereMaterial = new THREE.PointsMaterial({
+      color: new THREE.Color(0xd4af37),
+      size: 0.08,
+      sizeAttenuation: true,
+      transparent: true,
+      opacity: 0.95
+    });
+
+    const particleSphere = new THREE.Points(sphereGeometry, sphereMaterial);
+    sphereGroup.add(particleSphere);
+
+    // Core pulse
+    const coreGeometry = new THREE.SphereGeometry(1.1, 32, 32);
+    const coreMaterial = new THREE.MeshBasicMaterial({
+      color: 0xfff4cc,
+      transparent: true,
+      opacity: 0
+    });
+    const core = new THREE.Mesh(coreGeometry, coreMaterial);
+    sphereGroup.add(core);
+
+    // Background dust particles
+    const dustGeometry = new THREE.BufferGeometry();
+    const dustCount = 900;
+    const dustPositions = new Float32Array(dustCount * 3);
+    for (let i = 0; i < dustCount; i++) {
+      dustPositions[i * 3] = (Math.random() - 0.5) * 90;
+      dustPositions[i * 3 + 1] = (Math.random() - 0.5) * 60;
+      dustPositions[i * 3 + 2] = (Math.random() - 0.5) * 90;
+    }
+    dustGeometry.setAttribute("position", new THREE.BufferAttribute(dustPositions, 3));
+    const dustMaterial = new THREE.PointsMaterial({
+      color: new THREE.Color(0x555555),
+      size: 0.12,
+      transparent: true,
+      opacity: 0.55
+    });
+    const dust = new THREE.Points(dustGeometry, dustMaterial);
+    scene.add(dust);
+
+    // Interaction
+    let targetRotX = 0;
+    let targetRotY = 0;
+    let currentRotX = 0;
+    let currentRotY = 0;
+
+    let mouseX = 0;
+    let mouseY = 0;
+
+    function onPointerMove(e) {
+      const x = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
+      const y = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
+
+      mouseX = (x / window.innerWidth) * 2 - 1;
+      mouseY = -(y / window.innerHeight) * 2 + 1;
+
+      targetRotY = mouseX * 0.7;
+      targetRotX = mouseY * 0.5;
+    }
+
+    function energiseCore() {
+      // quick pulse & color shift
+      const startScale = sphereGroup.scale.x;
+      const targetScale = startScale * 1.06;
+      const startTime = performance.now();
+      const duration = 260;
+
+      const startColor = sphereMaterial.color.clone();
+      const brightColor = new THREE.Color(0xfff3b0);
+
+      function animatePulse(now) {
+        const t = Math.min((now - startTime) / duration, 1);
+        const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; // easeInOut
+        const s = startScale + (targetScale - startScale) * (1 - Math.abs(1 - 2 * t));
+
+        sphereGroup.scale.setScalar(s);
+
+        sphereMaterial.color.r = startColor.r + (brightColor.r - startColor.r) * ease;
+        sphereMaterial.color.g = startColor.g + (brightColor.g - startColor.g) * ease;
+        sphereMaterial.color.b = startColor.b + (brightColor.b - startColor.b) * ease;
+
+        
+
+        if (t < 1) {
+          requestAnimationFrame(animatePulse);
+        } else {
+          // softly return to original color
+          sphereMaterial.color.copy(startColor);
+          coreMaterial.opacity = 0;
+          sphereGroup.scale.setScalar(startScale);
+        }
+      }
+
+      requestAnimationFrame(animatePulse);
+    }
+
+    window.addEventListener("mousemove", onPointerMove);
+    window.addEventListener("touchmove", onPointerMove, { passive: true });
+    window.addEventListener("click", energiseCore);
+    window.addEventListener("touchstart", energiseCore, { passive: true });
+
+    // Resize
+    window.addEventListener("resize", () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    });
+
+    // Animation loop
+    let lastTime = performance.now();
+    function animate(now) {
+      requestAnimationFrame(animate);
+      const delta = (now - lastTime) / 1000;
+      lastTime = now;
+
+      // smooth rotation interpolation
+      currentRotX += (targetRotX - currentRotX) * 0.06;
+      currentRotY += (targetRotY - currentRotY) * 0.06;
+
+      sphereGroup.rotation.x = currentRotX + delta * 0.12;
+      sphereGroup.rotation.y = currentRotY + delta * 0.3;
+
+      dust.rotation.y += delta * 0.01;
+
+      // subtle camera parallax
+      camera.position.x = mouseX * 1.5;
+      camera.position.y = mouseY * 0.8;
+      camera.lookAt(scene.position);
+
+      renderer.render(scene, camera);
+    }
+
+    animate(performance.now());
+  </script>
+</body>
+</html>
