@@ -325,7 +325,7 @@
     const particleSphere = new THREE.Points(sphereGeometry, sphereMaterial);
     sphereGroup.add(particleSphere);
 
-    // Core pulse
+    // Core pulse (currently invisible)
     const coreGeometry = new THREE.SphereGeometry(1.1, 32, 32);
     const coreMaterial = new THREE.MeshBasicMaterial({
       color: 0xfff4cc,
@@ -353,6 +353,23 @@
     });
     const dust = new THREE.Points(dustGeometry, dustMaterial);
     scene.add(dust);
+
+    // ⭐ Responsive sizing for sphere + camera
+    function updateViewportSettings() {
+      const isMobile = window.innerWidth <= 640;
+
+      if (isMobile) {
+        // smaller sphere and slightly further camera on mobile
+        sphereGroup.scale.set(0.65, 0.65, 0.65);
+        camera.position.set(0, 0, 21);
+      } else {
+        // desktop defaults
+        sphereGroup.scale.set(1, 1, 1);
+        camera.position.set(0, 0, 18);
+      }
+
+      camera.updateProjectionMatrix();
+    }
 
     // Interaction
     let targetRotX = 0;
@@ -395,14 +412,11 @@
         sphereMaterial.color.g = startColor.g + (brightColor.g - startColor.g) * ease;
         sphereMaterial.color.b = startColor.b + (brightColor.b - startColor.b) * ease;
 
-        
-
         if (t < 1) {
           requestAnimationFrame(animatePulse);
         } else {
           // softly return to original color
           sphereMaterial.color.copy(startColor);
-          coreMaterial.opacity = 0;
           sphereGroup.scale.setScalar(startScale);
         }
       }
@@ -420,9 +434,12 @@
       const w = window.innerWidth;
       const h = window.innerHeight;
       camera.aspect = w / h;
-      camera.updateProjectionMatrix();
       renderer.setSize(w, h);
+      updateViewportSettings(); // ⭐ keep sphere size consistent after resize
     });
+
+    // Initial viewport setup ⭐
+    updateViewportSettings();
 
     // Animation loop
     let lastTime = performance.now();
@@ -441,8 +458,8 @@
       dust.rotation.y += delta * 0.01;
 
       // subtle camera parallax
-      camera.position.x = mouseX * 1.5;
-      camera.position.y = mouseY * 0.8;
+      camera.position.x += (mouseX * 1.5 - camera.position.x) * 0.08;
+      camera.position.y += (mouseY * 0.8 - camera.position.y) * 0.08;
       camera.lookAt(scene.position);
 
       renderer.render(scene, camera);
