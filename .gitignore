@@ -1,0 +1,55 @@
+# Node Modules (if any future expansion)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+logs/
+*.log
+pnpm-debug.log*
+
+# Vercel build output
+.vercel/
+
+# Local environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Build / Dist folders (if you add a build system later)
+dist/
+build/
+
+# Cache
+.cache/
+.next/
+out/
+tmp/
+temp/
+
+# Compiled code
+*.cache
+*.tsbuildinfo
+
+# IDE files
+.vscode/
+.idea/
+
+# Backup files
+*.bak
+*.tmp
+*.swp
+
+# Mac files
+.AppleDouble
+.LSOverride
+
+# Windows shortcuts
+*.lnk
