@@ -3,7 +3,47 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Palonex Solutions — Coming Soon</title>
+
+  <title>Palonex Solutions — AI Automation, Intelligent Systems & Tech Startup Innovations</title>
+
+  <!-- Primary SEO Meta Tags -->
+  <meta name="title" content="Palonex Solutions — AI Automation, Intelligent Systems & Tech Startup Innovations">
+  <meta name="description" content="Palonex Solutions builds intelligent AI automation systems, orchestration layers, workflow engines, and real-world decision intelligence. A next-gen tech startup crafting tools that think, decide, and act with precision.">
+  <meta name="keywords" content="AI automation, intelligent systems, AI startup, tech startup India, Palonex Solutions, workflow automation, AI orchestration, autonomous systems, decision intelligence, automation tools, machine intelligence, next-gen technology, emerging tech startup">
+
+  <!-- Robots -->
+  <meta name="robots" content="index, follow" />
+  <meta name="googlebot" content="index, follow" />
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://palonexsolutions.in/" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Palonex Solutions — Intelligent AI Automation Systems">
+  <meta property="og:description" content="We develop AI automation, workflow orchestration, and intelligent systems for real-world decision-making.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://palonexsolutions.in/">
+  <meta property="og:image" content="https://palonexsolutions.in/og-image.png">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Palonex Solutions — AI Automation & Intelligent Systems">
+  <meta name="twitter:description" content="Next-gen tech startup building orchestration layers and AI-powered automation tools.">
+  <meta name="twitter:image" content="https://palonexsolutions.in/og-image.png">
+
+  <!-- Organization Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Palonex Solutions",
+    "url": "https://palonexsolutions.in/",
+    "description": "Palonex Solutions is a tech startup focused on AI automation, workflow orchestration, and intelligent system design.",
+    "logo": "https://palonexsolutions.in/logo.png",
+    "foundingDate": "2025",
+    "sameAs": []
+  }
+  </script>
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -24,24 +64,20 @@
       height: 100vh;
     }
 
-    /* === 3D SCENE CANVAS === */
     #scene-container {
       position: fixed;
       inset: 0;
       z-index: 1;
     }
 
-    /* subtle vignette overlay */
     .vignette {
       position: fixed;
       inset: 0;
       pointer-events: none;
-      background:
-        radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.35) 60%, rgba(0,0,0,0.85) 100%);
+      background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.35) 60%, rgba(0,0,0,0.85) 100%);
       z-index: 2;
     }
 
-    /* === CONTENT OVERLAY === */
     .content {
       position: relative;
       z-index: 3;
@@ -52,7 +88,7 @@
       align-items: center;
       text-align: center;
       padding: 0 1.5rem;
-      pointer-events: none; /* only allow buttons to receive events */
+      pointer-events: none;
     }
 
     .content-inner {
@@ -117,7 +153,6 @@
       margin-bottom: 2.3rem;
     }
 
-    /* CTA row */
     .cta-row {
       display: flex;
       flex-wrap: wrap;
@@ -143,9 +178,8 @@
     .btn-primary {
       background: radial-gradient(circle at top left, #f7e9b0 0%, #d4af37 45%, #8b6b22 100%);
       color: #111;
-      box-shadow:
-        0 0 14px rgba(212, 175, 55, 0.65),
-        0 18px 35px rgba(0, 0, 0, 0.9);
+      box-shadow: 0 0 14px rgba(212, 175, 55, 0.65),
+                  0 18px 35px rgba(0, 0, 0, 0.9);
     }
 
     .btn-primary::before {
@@ -165,9 +199,8 @@
 
     .btn-primary:hover {
       transform: translateY(-2px) scale(1.02);
-      box-shadow:
-        0 0 22px rgba(212, 175, 55, 0.9),
-        0 24px 45px rgba(0, 0, 0, 0.95);
+      box-shadow: 0 0 22px rgba(212, 175, 55, 0.9),
+                  0 24px 45px rgba(0, 0, 0, 0.95);
     }
 
     .btn-ghost {
@@ -217,11 +250,16 @@
 </head>
 <body>
 
-  <!-- 3D scene background -->
+  <!-- Hidden SEO Text -->
+  <div style="display:none;">
+    Palonex Solutions is an AI & automation tech startup developing next-generation intelligent systems,
+    workflow engines, orchestration layers, autonomous decision-making platforms, and machine-intelligent
+    automation tools. We focus on building real-world AI systems that analyse, decide, and act with precision.
+  </div>
+
   <div id="scene-container"></div>
   <div class="vignette"></div>
 
-  <!-- UI content -->
   <div class="content">
     <div class="content-inner">
       <div class="badge">
@@ -255,24 +293,15 @@
     © <span id="year"></span> Palonex Solutions — All Rights Reserved.
   </footer>
 
-  <!-- Three.js from CDN -->
   <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
 
   <script>
-    // Year
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    // === THREE.JS PARTICLE HOLOGRAM SCENE ===
     const container = document.getElementById("scene-container");
-
     const scene = new THREE.Scene();
 
-    const camera = new THREE.PerspectiveCamera(
-      55,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    );
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 0, 18);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -280,7 +309,6 @@
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
-    // Soft environment light
     const ambient = new THREE.AmbientLight(0xffffff, 0.45);
     scene.add(ambient);
 
@@ -288,7 +316,6 @@
     dirLight.position.set(4, 6, 8);
     scene.add(dirLight);
 
-    // === MAIN PARTICLE SPHERE ===
     const sphereGroup = new THREE.Group();
     scene.add(sphereGroup);
 
@@ -298,7 +325,6 @@
 
     const radius = 7;
     for (let i = 0; i < particleCount; i++) {
-      // Fibonacci sphere distribution
       const iRel = i / (particleCount - 1);
       const phi = Math.acos(1 - 2 * iRel);
       const theta = Math.PI * (1 + Math.sqrt(5)) * i;
@@ -325,7 +351,6 @@
     const particleSphere = new THREE.Points(sphereGeometry, sphereMaterial);
     sphereGroup.add(particleSphere);
 
-    // Core pulse (currently invisible)
     const coreGeometry = new THREE.SphereGeometry(1.1, 32, 32);
     const coreMaterial = new THREE.MeshBasicMaterial({
       color: 0xfff4cc,
@@ -335,35 +360,35 @@
     const core = new THREE.Mesh(coreGeometry, coreMaterial);
     sphereGroup.add(core);
 
-    // Background dust particles
     const dustGeometry = new THREE.BufferGeometry();
     const dustCount = 900;
     const dustPositions = new Float32Array(dustCount * 3);
+
     for (let i = 0; i < dustCount; i++) {
       dustPositions[i * 3] = (Math.random() - 0.5) * 90;
       dustPositions[i * 3 + 1] = (Math.random() - 0.5) * 60;
       dustPositions[i * 3 + 2] = (Math.random() - 0.5) * 90;
     }
+
     dustGeometry.setAttribute("position", new THREE.BufferAttribute(dustPositions, 3));
+
     const dustMaterial = new THREE.PointsMaterial({
       color: new THREE.Color(0x555555),
       size: 0.12,
       transparent: true,
       opacity: 0.55
     });
+
     const dust = new THREE.Points(dustGeometry, dustMaterial);
     scene.add(dust);
 
-    // ⭐ Responsive sizing for sphere + camera
     function updateViewportSettings() {
       const isMobile = window.innerWidth <= 640;
 
       if (isMobile) {
-        // smaller sphere and slightly further camera on mobile
         sphereGroup.scale.set(0.65, 0.65, 0.65);
         camera.position.set(0, 0, 21);
       } else {
-        // desktop defaults
         sphereGroup.scale.set(1, 1, 1);
         camera.position.set(0, 0, 18);
       }
@@ -371,7 +396,6 @@
       camera.updateProjectionMatrix();
     }
 
-    // Interaction
     let targetRotX = 0;
     let targetRotY = 0;
     let currentRotX = 0;
@@ -392,7 +416,6 @@
     }
 
     function energiseCore() {
-      // quick pulse & color shift
       const startScale = sphereGroup.scale.x;
       const targetScale = startScale * 1.06;
       const startTime = performance.now();
@@ -403,7 +426,7 @@
 
       function animatePulse(now) {
         const t = Math.min((now - startTime) / duration, 1);
-        const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; // easeInOut
+        const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
         const s = startScale + (targetScale - startScale) * (1 - Math.abs(1 - 2 * t));
 
         sphereGroup.scale.setScalar(s);
@@ -415,7 +438,6 @@
         if (t < 1) {
           requestAnimationFrame(animatePulse);
         } else {
-          // softly return to original color
           sphereMaterial.color.copy(startColor);
           sphereGroup.scale.setScalar(startScale);
         }
@@ -429,26 +451,22 @@
     window.addEventListener("click", energiseCore);
     window.addEventListener("touchstart", energiseCore, { passive: true });
 
-    // Resize
     window.addEventListener("resize", () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
       camera.aspect = w / h;
       renderer.setSize(w, h);
-      updateViewportSettings(); // ⭐ keep sphere size consistent after resize
+      updateViewportSettings();
     });
 
-    // Initial viewport setup ⭐
     updateViewportSettings();
 
-    // Animation loop
     let lastTime = performance.now();
     function animate(now) {
       requestAnimationFrame(animate);
       const delta = (now - lastTime) / 1000;
       lastTime = now;
 
-      // smooth rotation interpolation
       currentRotX += (targetRotX - currentRotX) * 0.06;
       currentRotY += (targetRotY - currentRotY) * 0.06;
 
@@ -457,7 +475,6 @@
 
       dust.rotation.y += delta * 0.01;
 
-      // subtle camera parallax
       camera.position.x += (mouseX * 1.5 - camera.position.x) * 0.08;
       camera.position.y += (mouseY * 0.8 - camera.position.y) * 0.08;
       camera.lookAt(scene.position);
