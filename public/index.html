@@ -44,7 +44,7 @@
     "sameAs": []
   }
   </script>
-  <script defer src="/_vercel/insights/script.js"></script>
+  <!-- <script defer src="/_vercel/insights/script.js"></script> -->
   <link rel="canonical" href="https://palonexsolutions.in/">
   
   <!-- Favicon -->
@@ -163,10 +163,51 @@
 
     .cta-row {
       display: flex;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .notify-form {
+      display: flex;
       flex-wrap: wrap;
       gap: 0.85rem;
       justify-content: center;
-      margin-bottom: 2.2rem;
+      align-items: center;
+    }
+
+    .email-input {
+      min-width: 240px;
+      max-width: 320px;
+      padding: 0.78rem 1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(120, 120, 120, 0.7);
+      background: rgba(10,10,10,0.85);
+      color: #f1f1f1;
+      outline: none;
+      font-size: 0.86rem;
+      letter-spacing: 0.03em;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .email-input::placeholder {
+      color: #666;
+    }
+
+    .email-input:focus {
+      border-color: rgba(212, 175, 55, 0.7);
+      box-shadow: 0 0 14px rgba(212, 175, 55, 0.45);
+      background: rgba(8,8,8,0.95);
+    }
+
+    .email-input.valid {
+      border-color: rgba(121, 227, 158, 0.9);
+      box-shadow: 0 0 14px rgba(121, 227, 158, 0.45);
+    }
+
+    .email-input.invalid {
+      border-color: rgba(255, 107, 107, 0.9);
+      box-shadow: 0 0 14px rgba(255, 107, 107, 0.45);
     }
 
     .btn-primary,
@@ -181,6 +222,7 @@
       transition: all 0.28s ease;
       position: relative;
       overflow: hidden;
+      white-space: nowrap;
     }
 
     .btn-primary {
@@ -211,6 +253,13 @@
                   0 24px 45px rgba(0, 0, 0, 0.95);
     }
 
+    .btn-primary:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 0 8px rgba(80, 80, 80, 0.4);
+    }
+
     .btn-ghost {
       background: rgba(10,10,10,0.85);
       border-color: rgba(120, 120, 120, 0.7);
@@ -223,6 +272,28 @@
       color: #fff0c2;
       box-shadow: 0 0 16px rgba(212, 175, 55, 0.35);
       transform: translateY(-2px);
+    }
+
+    .feedback {
+      min-height: 1.1em;
+      font-size: 0.78rem;
+      margin-top: 0.3rem;
+      margin-bottom: 1.1rem;
+      color: #7f7f7f;
+      transition: color 0.25s ease, opacity 0.25s ease, transform 0.25s ease;
+      opacity: 0.95;
+    }
+
+    .feedback.error {
+      color: #ff6b6b;
+    }
+
+    .feedback.success {
+      color: #79e39e;
+    }
+
+    .feedback.info {
+      color: #f3d27a;
     }
 
     .hint {
@@ -250,8 +321,18 @@
       .content {
         padding-top: 1.4rem;
       }
-      .core-hint {
+
+      .hint {
         display: none;
+    }
+
+      .notify-form {
+        flex-direction: column;
+      }
+
+      .email-input {
+        max-width: 100%;
+        width: 100%;
       }
     }
   </style>
@@ -286,10 +367,25 @@
         Our full experience is under construction.
       </div>
 
+      <!-- NEW: email input + notify button -->
       <div class="cta-row">
-        <button class="btn-primary">Notify me at launch</button>
-        <button class="btn-ghost core-hint">Move your cursor — this is live.</button>
+        <form id="notify-form" class="notify-form" novalidate>
+          <input
+            type="email"
+            id="email-input"
+            class="email-input"
+            autocomplete="email"
+            placeholder="Enter your email to get notified"
+            inputmode="email"
+          />
+          <button class="btn-primary" id="notify-btn" type="submit" disabled>
+            Notify me at launch
+          </button>
+        </form>
       </div>
+
+      <!-- Dynamic validation / status messages -->
+      <div id="email-feedback" class="feedback"></div>
 
       <div class="hint">
         Tip: Drag your mouse or finger to orbit the particle core. Click to energise it.
@@ -304,7 +400,147 @@
   <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
 
   <script>
+    // Footer year
     document.getElementById("year").textContent = new Date().getFullYear();
+
+    // === EMAIL VALIDATION + FORM LOGIC =====================================
+
+const emailInput = document.getElementById("email-input");
+const notifyBtn = document.getElementById("notify-btn");
+const feedbackEl = document.getElementById("email-feedback");
+const notifyForm = document.getElementById("notify-form");
+
+function setFeedback(message, type) {
+  feedbackEl.textContent = message || "";
+  feedbackEl.classList.remove("error", "success", "info");
+  if (type) {
+    feedbackEl.classList.add(type);
+  }
+}
+
+// Strong email validation, but NO feedback during typing
+function isValidEmailFormat(email) {
+  if (!email || typeof email !== "string") return false;
+  email = email.trim();
+
+  const basicRegex = /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/;
+  if (!basicRegex.test(email)) return false;
+
+  if (/\s/.test(email)) return false;
+
+  const [local, domain] = email.split("@");
+  if (!local || !domain) return false;
+
+  if (local.startsWith(".") || local.endsWith(".")) return false;
+  if (local.includes("..")) return false;
+
+  if (domain.startsWith("-") || domain.endsWith("-")) return false;
+  if (domain.includes("..")) return false;
+  if (!domain.includes(".")) return false;
+
+  const parts = domain.split(".");
+  const tld = parts[parts.length - 1];
+  if (!tld || tld.length < 2 || tld.length > 24) return false;
+
+  return true;
+}
+
+// Real-time validation → ONLY enables/disables button
+function handleRealtimeValidation() {
+  const value = emailInput.value.trim();
+
+  // Clear feedback during typing
+  setFeedback("", "");
+
+  if (isValidEmailFormat(value)) {
+    notifyBtn.disabled = false;
+    emailInput.classList.add("valid");
+    emailInput.classList.remove("invalid");
+  } else {
+    notifyBtn.disabled = true;
+    emailInput.classList.add("invalid");
+    emailInput.classList.remove("valid");
+  }
+}
+
+emailInput.addEventListener("input", handleRealtimeValidation);
+emailInput.addEventListener("blur", handleRealtimeValidation);
+
+// When user clicks notify button → NOW we show feedback
+notifyForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const email = emailInput.value.trim();
+
+  if (!isValidEmailFormat(email)) {
+    notifyBtn.disabled = true;
+    emailInput.classList.add("invalid");
+    emailInput.classList.remove("valid");
+    setFeedback("Email doesn't exist", "error");
+    return;
+  }
+
+  const originalLabel = notifyBtn.textContent;
+  notifyBtn.textContent = "Sending...";
+  notifyBtn.disabled = true;
+  emailInput.disabled = true;
+
+  try {
+    const res = await fetch("https://comingsoonbackend-s7hy.onrender.com/api/subscribe", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email })
+    });
+
+    let data = {};
+    try {
+      data = await res.json();
+    } catch (_) {}
+
+    const status = data.status;
+
+    if (status === "exists") {
+      setFeedback("Already subscribed", "info");
+      notifyBtn.textContent = originalLabel;
+      emailInput.disabled = false;
+      notifyBtn.disabled = false;
+    } 
+    else if (status === "invalid") {
+      setFeedback("Email doesn't exist", "error");
+      emailInput.disabled = false;
+      notifyBtn.textContent = originalLabel;
+      notifyBtn.disabled = true;
+    } 
+    else if (status === "subscribed") {
+      setTimeout(() => setFeedback("Email sent if the address is correct", "success"), 800);
+
+      setTimeout(() => {
+        emailInput.disabled = false;
+        emailInput.value = "";
+        emailInput.classList.remove("valid", "invalid");
+        notifyBtn.textContent = originalLabel;
+        notifyBtn.disabled = true;
+      }, 2000);
+    } 
+    else {
+      setFeedback("Something went wrong. Please try again.", "error");
+      emailInput.disabled = false;
+      notifyBtn.textContent = originalLabel;
+      notifyBtn.disabled = false;
+    }
+
+  } catch (err) {
+    setFeedback("Something went wrong. Please try again.", "error");
+    emailInput.disabled = false;
+    notifyBtn.textContent = originalLabel;
+    notifyBtn.disabled = false;
+  }
+});
+
+
+    // === THREE.JS SCENE =====================================================
 
     const container = document.getElementById("scene-container");
     const scene = new THREE.Scene();
