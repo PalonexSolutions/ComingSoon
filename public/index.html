@@ -489,7 +489,7 @@ notifyForm.addEventListener("submit", async (e) => {
   emailInput.disabled = true;
 
   try {
-    const res = await fetch("https://comingsoonbackend-s7hy.onrender.com/api/subscribe", {
+    const res = await fetch("http://13.61.180.52:5500/api/subscribe", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
