@@ -1,4 +1,23 @@
 User-agent: *
 Allow: /
+Allow: /favicon.ico
+Allow: /favicon.png
+Allow: /logo.png
 
 Sitemap: https://palonexsolutions.in/sitemap.xml
+
+User-agent: Google-Extended
+Allow: /
+
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
